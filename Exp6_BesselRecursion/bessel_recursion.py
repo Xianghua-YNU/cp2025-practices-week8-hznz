@@ -17,7 +17,7 @@ def bessel_up(x, lmax):
     # 1. 初始化结果数组
     # 2. 计算j_0和j_1的初始值
     # 3. 使用递推公式计算高阶项
-      j = np.zeros(lmax + 1)
+    j = np.zeros(lmax + 1)
     
     # 处理x=0的特殊情况
     if x == 0:
