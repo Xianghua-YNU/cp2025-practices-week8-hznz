@@ -19,25 +19,16 @@ def bessel_up(x, lmax):
     # 3. 使用递推公式计算高阶项
     j = np.zeros(lmax + 1)
     
-    # 处理x=0的特殊情况
-    if x == 0:
-        j[0] = 1.0  # j0(0)=1
-        return j
-    
     # 计算初始值
-    if x == 0:
-        raise ZeroDivisionError("x cannot be zero")
+    j[0] = np.sin(x) / x if x != 0 else 1.0  # j_0(x)
+    if lmax > 0:
+        j[1] = np.sin(x) / x**2 - np.cos(x) / x  # j_1(x)
     
-    j = np.zeros(lmax + 1)
-    j[0] = np.sin(x) / x
-    if lmax >= 1:
-        j[1] = np.sin(x) / (x**2) - np.cos(x) / x
-    
+    # 向上递推
     for l in range(1, lmax):
-        j[l+1] = (2*l + 1)/x * j[l] - j[l-1]
+        j[l+1] = (2*l + 1) / x * j[l] - j[l-1]
     
     return j
-
 def bessel_down(x, lmax, m_start=None):
     """向下递推计算球贝塞尔函数
     
@@ -56,14 +47,14 @@ def bessel_down(x, lmax, m_start=None):
     # 3. 使用递推公式向下计算
     # 4. 使用j_0(x)进行归一化
     if m_start is None:
-        m_start = lmax + 15  # 默认起始阶数
-    
+        m_start = lmax + 15
+        
     # 初始化数组
     j_temp = np.zeros(m_start + 2)
     
     # 设置初始值（任意小的非零值）
     j_temp[m_start + 1] = 0.0
-    j_temp[m_start] = 1.0e-20
+    j_temp[m_start] = 1.0
     
     # 向下递推
     for l in range(m_start, 0, -1):
@@ -74,7 +65,9 @@ def bessel_down(x, lmax, m_start=None):
     scale = j0_analytic / j_temp[0]
     
     # 返回0到lmax的结果
-    return j_temp[:lmax+1] * scale
+    j = j_temp[:lmax+1] * scale
+    
+    return j
 
 def plot_comparison(x, lmax):
     """绘制不同方法计算结果的比较图
