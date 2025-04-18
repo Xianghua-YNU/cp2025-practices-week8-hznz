@@ -25,11 +25,14 @@ def bessel_up(x, lmax):
         return j
     
     # 计算初始值
+    if x == 0:
+        raise ZeroDivisionError("x cannot be zero")
+    
+    j = np.zeros(lmax + 1)
     j[0] = np.sin(x) / x
     if lmax >= 1:
         j[1] = np.sin(x) / (x**2) - np.cos(x) / x
     
-    # 向上递推
     for l in range(1, lmax):
         j[l+1] = (2*l + 1)/x * j[l] - j[l-1]
     
